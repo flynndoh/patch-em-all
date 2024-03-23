@@ -12,13 +12,8 @@
 
 <script setup lang="ts">
 defineProps<{
-  people: {
-    type: Object,
-    required: true
-  }
+  people: readonly any[]
 }>()
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

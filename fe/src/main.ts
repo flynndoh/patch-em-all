@@ -1,11 +1,12 @@
 import './assets/main.css'
-import "@mdi/font/css/materialdesignicons.css";
+import '@mdi/font/css/materialdesignicons.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import SnackbarMixin from '@/mixins/SnackbarMixin.vue'
 
 // Vuetify
 import 'vuetify/styles'
@@ -18,15 +19,15 @@ const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'dark',
+    defaultTheme: 'dark'
   },
   icons: {
     defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi,
-    },
-  },
+      mdi
+    }
+  }
 })
 
 const app = createApp(App)
@@ -34,5 +35,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
+
+app.mixin(SnackbarMixin)
 
 app.mount('#app')
