@@ -1,66 +1,33 @@
-from datetime import datetime
-
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import EmailStr
-from sqlalchemy import func
-from sqlmodel import select, Session
+from sqlmodel import select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
-from database import get_session
-from models import User
+from auth.user_session_manager import fastapi_users, current_active_user
+from database import get_async_session, get_user_db
+from adapters.sqlmodel_fastapiuser import SQLModelUserDatabaseAsync
+from models import User, UserRead, UserUpdate, Patch
 
 users_router = APIRouter(tags=["users"], prefix="/users")
 
+users_router.include_router(
+    fastapi_users.get_users_router(UserRead, UserUpdate),
+)
+
 
 @users_router.get("")
-def get_users(session: Session = Depends(get_session)):
-    return session.exec(select(User)).all()
+async def get_users(session: AsyncSession = Depends(get_async_session)):
+    return [UserRead(**u.dict()) for u in (await session.exec(select(User))).all()]
 
 
-@users_router.get("/{user_id}")
-def get_user(user_id: int, session: Session = Depends(get_session)):
-    user = session.get(User, user_id)
+@users_router.get("/me/patches")
+async def get_user_patches(session: AsyncSession = Depends(get_async_session), user: User = Depends(current_active_user)):
+    return (await session.exec(select(Patch).where(Patch.user_id == user.id))).all()
+
+
+@users_router.get("/{id}/patches")
+async def get_user_patches(id: str, session: AsyncSession = Depends(get_async_session), user_db: SQLModelUserDatabaseAsync = Depends(get_user_db)):
+    user = await user_db.get(id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-
-@users_router.post("")
-def create_user(user_name: str, user_email: EmailStr, session: Session = Depends(get_session)):
-    if session.exec(select(func.count(User.id)).where(User.email == user_email)).one():
-        raise HTTPException(status_code=400, detail="Email has already been registered")
-    user = User(name=user_name, email=user_email, created=datetime.utcnow())
-    session.add(user)
-    session.commit()
-    session.refresh(user)
-    return user
-
-
-@users_router.put("/{user_id}")
-def update_user(user_id: int, user_name: str | None = None, user_email: EmailStr | None = None, session: Session = Depends(get_session)):
-    db_user = session.get(User, user_id)
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    if session.exec(select(func.count(User.id)).where(User.email == user_email)).one():
-        raise HTTPException(status_code=400, detail="Email has already been registered")
-
-    if user_name is not None:
-        db_user.name = user_name
-    if user_email is not None:
-        db_user.email = user_email
-    session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
-    return db_user
-
-
-@users_router.delete("/{user_id}")
-def delete_user(user_id: int, session: Session = Depends(get_session)):
-    user = session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    session.delete(user)
-    session.commit()
-    return {"message": "User deleted successfully"}
-
+    return (await session.exec(select(Patch).where(Patch.user_id == user.id))).all()
 

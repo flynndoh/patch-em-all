@@ -237,7 +237,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -288,3 +287,7 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm
 /patch-em-all.sqlite
+/schema/test-data/flights.sql
+/schema/test-data/patches.sql
+/schema/test-data/users.sql
+/.private.env
