@@ -9,7 +9,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from adapters.sqlmodel_fastapiuser import SQLModelUserDatabaseAsync
 from adapters.sqlmodel_fastapiuser.access_token import SQLModelAccessTokenDatabaseAsync
 from env import environment
-from models import User, AccessToken
+from models.db_models import User, AccessToken
 
 engine = create_async_engine(environment.dsn, echo=True, connect_args={"check_same_thread": False})
 

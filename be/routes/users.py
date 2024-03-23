@@ -5,7 +5,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from auth.user_session_manager import fastapi_users, current_active_user
 from database import get_async_session, get_user_db
 from adapters.sqlmodel_fastapiuser import SQLModelUserDatabaseAsync
-from models import User, UserRead, UserUpdate, Patch
+from models.db_models import User, Patch
+from models.biz_models import UserRead, UserUpdate
 
 users_router = APIRouter(tags=["users"], prefix="/users")
 

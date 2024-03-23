@@ -12,7 +12,7 @@ from fastapi_users.authentication.strategy import AccessTokenDatabase, DatabaseS
 from adapters.sqlmodel_fastapiuser import SQLModelUserDatabase
 from database import get_user_db, get_access_token_db
 from env import environment
-from models import User, AccessToken
+from models.db_models import User, AccessToken
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):

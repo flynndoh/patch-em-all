@@ -5,9 +5,9 @@ from sqlalchemy import func
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from auth.user_session_manager import current_active_user, current_super_user
+from auth.user_session_manager import current_super_user
 from database import get_async_session
-from models import Flight, User
+from models.db_models import Flight
 
 flights_router = APIRouter(tags=["flights"], prefix="/flights")
 
