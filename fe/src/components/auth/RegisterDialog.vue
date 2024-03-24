@@ -113,7 +113,7 @@ function register() {
 
   registerAlert = false
   registerProcessing = true;
-  userStore().registerUser(firstName.value, lastName.value, email.value, password.value)
+  userStore().registerAndLogin(firstName.value, lastName.value, email.value, password.value)
     .then(() => {
       firstName.value = "";
       lastName.value = "";

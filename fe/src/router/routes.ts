@@ -1,7 +1,7 @@
 const HOME = 'Home'
-const ADD_PATCHES = 'AddPatches'
+const PROFILE = 'Profile'
 
 export default {
   HOME: HOME,
-  ADD_PATCHES: ADD_PATCHES
+  PROFILE: PROFILE
 }

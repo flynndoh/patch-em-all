@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia'
 import AuthClient, { type Requests } from '@/clients/auth.client'
 import UserClient, { type Responses } from '@/clients/user.client'
+import { isEmpty } from '@/utils'
 
 export const userStore = defineStore('users', {
   state: () => ({
     userData: {} as Responses.User,
-    isLoggedIn: false as boolean
   }),
 
   actions: {
-    async loginUser(email: string, password: string) {
+    async login(email: string, password: string) {
       try {
         const request: Requests.Login = {
           username: email,
@@ -17,13 +17,12 @@ export const userStore = defineStore('users', {
         }
         await AuthClient.login(request)
         this.userData = (await UserClient.getMe()).data
-        this.isLoggedIn = true
       } catch (error) {
         // let the form component display the error
         return error
       }
     },
-    async registerUser(firstName: string, lastName: string, email: string, password: string) {
+    async registerAndLogin(firstName: string, lastName: string, email: string, password: string) {
       try {
         const request: Requests.Register = {
           first_name: firstName,
@@ -32,11 +31,31 @@ export const userStore = defineStore('users', {
           password: password
         }
         await AuthClient.register(request)
-        await this.loginUser(email, password)
+        await this.login(email, password)
       } catch (error) {
         // let the form component display the error
         return error
       }
+    },
+    async refreshMe(): Promise<Responses.User | undefined> {
+      return await UserClient.getMe().then((userResponse) => {
+        if (userResponse.status === 200) {
+          this.userData = userResponse.data;
+          return Promise.resolve(userResponse.data);
+        }
+      }).catch(() => {
+          // Resolving promise rather than rejecting as I am using basic auth with no access to header only cookie.
+          this.userData = {} as Responses.User;
+          return Promise.resolve({} as Responses.User);
+        }
+      );
+    },
+    async logout() {
+      this.userData = {} as Responses.User;
+      await AuthClient.logout();
     }
+  },
+  getters: {
+    isLoggedIn: (state) => !isEmpty(state.userData),
   }
 })

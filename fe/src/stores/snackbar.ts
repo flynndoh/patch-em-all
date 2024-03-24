@@ -2,24 +2,22 @@ import { defineStore } from 'pinia'
 
 export const snackBarStore = defineStore('snackBar', {
   state: () => ({
-    text: 'Default Text' as string,
+    text: '' as string,
     color: 'green' as string,
-    time: 3500 as number
+    time: 3500 as number,
   }),
 
   actions: {
+    resetSnackBar() {
+      this.text = '';
+      this.color = 'green';
+      this.time = 3500;
+    },
+
     setSnackBar(snack: { [name: string]: any }) {
       this.text = snack.text
       this.color = snack.color
       this.time = snack.time
-    },
-
-    removeSnackBar() {
-      this.text = ''
-    },
-
-    resetSnackBar() {
-      return
     }
   },
   getters: {

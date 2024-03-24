@@ -34,6 +34,10 @@ export declare namespace Requests {
   interface Login {
     username: string
     password: string
+    // grant_type: string
+    // scope: string
+    // client_id: string
+    // client_secret: string
   }
 
   interface ForgotPassword {
@@ -48,7 +52,8 @@ export declare namespace Requests {
 
 class AuthClient implements AuthApi {
   async login(payload: Requests.Login): Promise<void> {
-    return CoreClient.client.post('/auth/login', payload)
+    console.log(payload)
+    return CoreClient.client.postForm('/auth/login', payload)
   }
 
   async register(payload: Requests.Register): Promise<AxiosResponse<Responses.Register>> {

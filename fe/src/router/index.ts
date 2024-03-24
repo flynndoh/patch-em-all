@@ -1,13 +1,26 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import routes from '@/router/routes'
+import { userStore } from '@/stores/user'
+
+const tryToFetchMe = async (to, from, next: Function) => {
+  try {
+    if (!userStore().isLoggedIn) {
+      await userStore().refreshMe()
+    }
+  } catch (e) {
+    await userStore().logout()
+  }
+  return next();
+};
 
 const routeRecords: RouteRecordRaw[] = [
   {
     path: '/',
     name: routes.HOME,
     component: HomeView,
-    meta: { transition: 'slide-left' }
+    meta: { transition: 'slide-left' },
+    beforeEnter: tryToFetchMe,
   }
   // {
   //   path: '/about',

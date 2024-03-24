@@ -22,7 +22,7 @@ export declare namespace Requests {}
 
 class UserClient implements UserApi {
   async getMe(): Promise<AxiosResponse<Responses.User>> {
-    return CoreClient.client.post<Responses.User>('/users/me')
+    return CoreClient.client.get<Responses.User>('/users/me')
   }
 }
 

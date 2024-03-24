@@ -88,7 +88,7 @@ function login() {
   loginAlert = false
   loginProcessing = true
   userStore()
-    .loginUser(email.value, password.value)
+    .login(email.value, password.value)
     .then(() => {
       email.value = ''
       password.value = ''

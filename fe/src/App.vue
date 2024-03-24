@@ -2,6 +2,7 @@
   <VApp>
     <VMain>
       <AuthHandler />
+      <FloatingTop/>
       <RouterView v-slot="{ Component }">
         <Transition
           :name="transition"
@@ -23,12 +24,19 @@ import SnackBar from '@/components/general/SnackBar.vue'
 
 import { onMounted } from 'vue'
 import router from '@/router'
+import { persistenceStore } from '@/stores/persistence'
+import { useTheme } from 'vuetify'
+import FloatingTop from '@/components/general/FloatingTop.vue'
 
 let transition: string
 let transitionMode: string = 'out-in'
 let transitionEnterActiveClass: string = ''
 
+const theme = useTheme()
+
 onMounted(() => {
+  theme.global.name.value = persistenceStore().settings.theme;
+
   router.beforeEach((to, from, next) => {
     transition = to.meta.transition || from.meta.transition || 'fade'
 

@@ -10,13 +10,13 @@
           </v-card>
         </v-row>
         <v-row no-gutters>
-          <v-card class="ma-2 pa-2">
+          <v-card class="ma-2 pa-2 helper-text">
             <v-container v-if="clientLoggedIn">
               <p>you don't have any patches :(<br /><a @click="goToAddPatches">add some!</a></p>
             </v-container>
 
             <v-container v-else class="px-5">
-              <p class="helper-text">
+              <p>
                 <a @click="openLoginDialog">Login</a> or
                 <a @click="openRegisterDialog">register</a> to start tracking your patches
               </p>
@@ -46,8 +46,6 @@ import { EventBus, events } from '@/event-bus'
 import { goToRoute } from '@/router'
 import routes from '@/router/routes'
 
-let loaded = false
-
 let chartData: ChartData = {
   labels: ['1', '3', '4', '6', '12', '32', '43'],
   datasets: [
@@ -62,11 +60,10 @@ let chartData: ChartData = {
 }
 
 const clientLoggedIn = computed(() => {
-  return userStore().isLoggedIn
+  return userStore().isLoggedIn;
 })
 
 function openLoginDialog() {
-  console.log('here')
   EventBus.emit(events.OPEN_LOGIN_DIALOG)
 }
 
@@ -75,15 +72,13 @@ function openRegisterDialog() {
 }
 
 function goToAddPatches() {
-  goToRoute(routes.ADD_PATCHES)
+  goToRoute(routes.PROFILE)
 }
 
 onMounted(() => {
   try {
     // const { userlist } = await fetch('/api/userlist')
     // this.chartdata = userlist
-
-    loaded = true
   } catch (e) {
     console.error(e)
   }
@@ -93,5 +88,11 @@ onMounted(() => {
 <style scoped>
 .main-container {
   height: 100%;
+}
+
+.helper-text p {
+  font-size: 15px;
+  text-align: center;
+  font-style: italic;
 }
 </style>
