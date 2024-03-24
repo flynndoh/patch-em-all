@@ -1,13 +1,24 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomePage from '@/pages/HomePage.vue'
 import routes from '@/router/routes'
 import { userStore } from '@/stores/user'
+import AboutPage from '@/pages/AboutPage.vue'
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage.vue'
+import ProfilePage from '@/pages/ProfilePage.vue'
+import NotFoundPage from '@/pages/NotFoundPage.vue'
 
 const tryToFetchMe = async (to, from, next: Function) => {
   try {
     if (!userStore().isLoggedIn) {
-      await userStore().refreshMe()
+      await userStore().refreshMe().catch(() => {
+        return next();
+      })
     }
+    if (userStore().isLoggedIn) {
+      await userStore().refreshMyPatches()
+      await userStore().refreshMyPokemon()
+    }
+
   } catch (e) {
     await userStore().logout()
   }
@@ -18,16 +29,35 @@ const routeRecords: RouteRecordRaw[] = [
   {
     path: '/',
     name: routes.HOME,
-    component: HomeView,
-    meta: { transition: 'slide-left' },
+    component: HomePage,
+    meta: { transition: 'slide-right' },
     beforeEnter: tryToFetchMe,
-  }
-  // {
-  //   path: '/about',
-  //   name: 'about',
-  //   component: HomeView,
-  //   meta: { transition: 'slide-left' },
-  // }
+  },
+  {
+    path: '/profile',
+    name: routes.PROFILE,
+    component: ProfilePage,
+    meta: { transition: 'slide-left' },
+  },
+  {
+    path: '/about',
+    name: routes.ABOUT,
+    component: AboutPage,
+    meta: { transition: 'slide-left' },
+  },
+  {
+    path: '/privacy-policy',
+    name: routes.PRIVACY_POLICY,
+    component: PrivacyPolicyPage,
+    meta: { transition: 'slide-left' },
+  },
+  // Default route, after checking all other routes
+  {
+    path: '/:pathMatch(.*)*',
+    name: routes.NOT_FOUND,
+    component: NotFoundPage,
+    meta: { transition: 'fade' },
+  },
 ]
 
 const router = createRouter({

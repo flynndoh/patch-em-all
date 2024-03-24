@@ -1,5 +1,5 @@
 <template>
-  <Line :data="chartData" :options="chartOptions" />
+  <Line :data="chartData" :options="chartOptions"/>
 </template>
 
 <script setup lang="ts">
@@ -11,12 +11,11 @@ import {
   Legend,
   LineElement,
   PointElement,
-  LinearScale,
-  CategoryScale,
-  Chart
+  LinearScale
 } from 'chart.js'
+import 'chartjs-adapter-moment';
 
-ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, LinearScale, CategoryScale)
+ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, LinearScale)
 
 defineProps<{
   chartData: {
@@ -27,6 +26,11 @@ defineProps<{
 
 let chartOptions = {
   responsive: true,
+  maintainAspectRatio: true,
+  // parsing: {
+  //   xAxisKey: 'flight.id',
+  //   yAxisKey: 'id'
+  // },
   scales: {
     x: {
       type: 'linear'

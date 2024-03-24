@@ -3,6 +3,9 @@ import CoreClient from './core.client'
 
 export interface UserApi {
   getMe(): Promise<AxiosResponse<Responses.User>>
+  getMyPatches(): Promise<AxiosResponse<Responses.Patches>>
+  getPokemon(id: number): Promise<AxiosResponse<Responses.Pokemon>>
+  getManyPokemon(payload: Requests.GetPokemon): Promise<AxiosResponse<Responses.Pokemon[]>>
 }
 
 export declare namespace Responses {
@@ -16,13 +19,54 @@ export declare namespace Responses {
     last_name: string
     created: Date
   }
+
+  interface Patches {
+    patches: Patch[],
+  }
+
+  interface Flight {
+    id: number,
+    name: string,
+    timestamp: Date
+  }
+
+  interface Patch {
+    id: string,
+    patch_number: number,
+    flight: Flight,
+    image: string
+    thumbnail: string
+  }
+
+  interface Pokemon {
+    id: number
+    name: string
+    sprite: string
+    image: string
+  }
 }
 
-export declare namespace Requests {}
+export declare namespace Requests {
+  interface GetPokemon {
+    pokemon_ids: number[]
+  }
+}
 
 class UserClient implements UserApi {
   async getMe(): Promise<AxiosResponse<Responses.User>> {
     return CoreClient.client.get<Responses.User>('/users/me')
+  }
+
+  async getMyPatches(): Promise<AxiosResponse<Responses.Patches>> {
+    return CoreClient.client.get<Responses.Patches>('/users/me/patches')
+  }
+
+  async getPokemon(id: number): Promise<AxiosResponse<Responses.Pokemon>> {
+    return CoreClient.client.get<Responses.Pokemon>(`/pokemon/${id}`)
+  }
+
+  async getManyPokemon(payload: Requests.GetPokemon): Promise<AxiosResponse<Responses.Pokemon[]>> {
+    return CoreClient.client.post<Responses.Pokemon[]>('/pokemon', payload)
   }
 }
 

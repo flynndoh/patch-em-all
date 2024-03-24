@@ -1,4 +1,3 @@
-import './assets/main.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 import { createApp } from 'vue'
@@ -14,12 +13,28 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import { green, red } from 'vuetify/util/colors'
 
 const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'dark'
+    defaultTheme: 'dark',
+    themes: {
+      light: {
+        colors: {
+          background: '#f7f7f7',
+          happy: green.lighten1,
+          sad: red.lighten1,
+        }
+      },
+      dark: {
+        colors: {
+          happy: green.lighten1,
+          sad: red.lighten1,
+        }
+      },
+    }
   },
   icons: {
     defaultSet: 'mdi',

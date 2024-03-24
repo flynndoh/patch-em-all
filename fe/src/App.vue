@@ -1,9 +1,9 @@
 <template>
   <VApp>
-    <VMain>
+    <VMain style="padding-bottom: 150px; ">
       <AuthHandler />
       <FloatingTop/>
-      <RouterView v-slot="{ Component }">
+      <RouterView v-slot="{ Component }" class="mt-5">
         <Transition
           :name="transition"
           :mode="transitionMode"
@@ -14,6 +14,7 @@
       </RouterView>
       <SnackBar />
     </VMain>
+    <FooterBar/>
   </VApp>
 </template>
 
@@ -27,6 +28,7 @@ import router from '@/router'
 import { persistenceStore } from '@/stores/persistence'
 import { useTheme } from 'vuetify'
 import FloatingTop from '@/components/general/FloatingTop.vue'
+import FooterBar from '@/components/general/FooterBar.vue'
 
 let transition: string
 let transitionMode: string = 'out-in'
@@ -68,8 +70,32 @@ onMounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@300;400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,100;0,200;0,300;0,400;0,600;0,700;1,100;1,200;1,300;1,400;1,600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap');
+@font-face {
+  font-family: 'UnisSansHeavyItalicCAPS';
+  src: url('assets/Uni_Sans_Heavy_Italic.woff') format('woff');
+}
 $body-font: 'Overpass';
-$title-font: 'Space Grotesk';
+$title-font: 'UnisSansHeavyItalicCAPS';
+
+#app {
+  margin: 0;
+  font-weight: normal;
+}
+
+p a, .green{
+  text-decoration: none;
+  color: hsla(160, 100%, 37%, 1);
+  transition: 0.4s;
+  padding: 2px;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
 
 .v-application {
   font-family: $body-font, sans-serif !important;

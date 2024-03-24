@@ -20,6 +20,7 @@ async def get_pokemon(id: int):
             if not res:
                 raise HTTPException(status_code=404, detail="Failed to obtain Pokemon")
             return Pokemon(
+                id=res.id,
                 name=res.name,
                 sprite=res.sprites.front_default.url,
                 image=f"https://assets.pokemon.com/assets/cms2/img/pokedex/full/{id:03}.png"

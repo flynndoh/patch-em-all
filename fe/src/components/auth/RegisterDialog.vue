@@ -1,15 +1,14 @@
 <template>
   <v-dialog :model-value="registerDialogOpen" width="500" persistent>
-    <v-card shaped>
-      <v-card-title class="secondary-inverted">
-        <h2>Register</h2>
-        <v-spacer />
-        <v-btn @click="closeDialog">
+    <v-card style="border-radius:40px 10px;" class="pa-5">
+      <v-card-title class="heading">
+        <h2 class="pt-3">Register</h2>
+        <v-btn @click="closeDialog" class="bg-red-lighten-1">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
-      <v-card-subtitle class="secondary-inverted pt-3">
+      <v-card-subtitle class="pt-3">
         <h3>
           Let's get you started
         </h3>
@@ -22,25 +21,30 @@
       ></v-progress-linear>
 
       <v-card-text class="mt-5">
-        <v-form ref="form_register" lazy-validation>
-          <v-text-field
-            ref="input_first_name"
-            v-model="firstName"
-            prepend-icon="mdi-account"
-            label="First Name"
-            :rules="rules.required"
-            required
-            v-on:keyup.enter="goToLastNameInput"
-          ></v-text-field>
-          <v-text-field
-            ref="input_last_name"
-            v-model="lastName"
-            prepend-icon="mdi-account"
-            label="Last Name"
-            :rules="rules.required"
-            required
-            v-on:keyup.enter="goToEmailInput"
-          ></v-text-field>
+        <v-form ref="form_register" validate-on="submit lazy">
+          <v-row>
+            <v-col>
+              <v-text-field
+                ref="input_first_name"
+                v-model="firstName"
+                prepend-icon="mdi-account"
+                label="First Name"
+                :rules="rules.required"
+                required
+                v-on:keyup.enter="goToLastNameInput"
+              ></v-text-field>
+            </v-col>
+            <v-col>
+              <v-text-field
+                ref="input_last_name"
+                v-model="lastName"
+                label="Last Name"
+                :rules="rules.required"
+                required
+                v-on:keyup.enter="goToEmailInput"
+              ></v-text-field>
+            </v-col>
+          </v-row>
           <v-text-field
             ref="input_email"
             v-model="email"
@@ -63,7 +67,7 @@
         </v-form>
       </v-card-text>
 
-      <v-alert :value="registerAlert" color="error">Incorrect register credentials.</v-alert>
+      <v-alert icon="$error" :model-value="registerFailure" color="error">Registration failed.</v-alert>
 
       <v-divider></v-divider>
 
@@ -90,8 +94,8 @@ defineProps({
   switchDialogCb: {required: true}
 });
 
-let registerAlert: boolean = false;
-let registerProcessing: boolean = false;
+let registerFailure = ref(false)
+let registerProcessing = ref(false)
 const firstName = ref("");
 const lastName = ref("");
 const email = ref("");
@@ -107,12 +111,13 @@ function closeDialog() {
 }
 
 function register() {
+  // TODO: This validation check no longer prevents the request from being sent!
   if (!form_register.value.validate()) {
-    return
+    return;
   }
 
-  registerAlert = false
-  registerProcessing = true;
+  registerFailure.value = false
+  registerProcessing.value = true;
   userStore().registerAndLogin(firstName.value, lastName.value, email.value, password.value)
     .then(() => {
       firstName.value = "";
@@ -123,8 +128,8 @@ function register() {
       EventBus.emit(events.CLIENT_LOGGED_IN);
       closeDialog();
     })
-    .catch(() => registerAlert = true)
-    .finally(() => registerProcessing = false);
+    .catch(() => registerFailure.value = true)
+    .finally(() => registerProcessing.value = false);
 }
 function goToLastNameInput() {
   input_last_name.value.focus();
@@ -138,6 +143,12 @@ function goToPasswordInput() {
 </script>
 
 <style scoped lang="scss">
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .btn-register {
   margin-right: 10px;
 }

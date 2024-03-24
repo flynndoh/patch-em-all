@@ -25,11 +25,21 @@ CREATE TABLE IF NOT EXISTS "user" (
 DROP TABLE "patch";
 CREATE TABLE IF NOT EXISTS "patch" (
     id VARCHAR(36) PRIMARY KEY,
-    user_id VARCHAR(36) NOT NULL,
     flight_id INTEGER NOT NULL,
-    patch_number INTEGER,
-    FOREIGN KEY (user_id) REFERENCES "user" (id),
+    image VARCHAR(255),
+    thumbnail VARCHAR(255),
     FOREIGN KEY (flight_id) REFERENCES flight (id)
+);
+
+-- Create UserPatch table
+DROP TABLE "userpatch";
+CREATE TABLE IF NOT EXISTS "userpatch" (
+    user_id VARCHAR(36) NOT NULL,
+    patch_id VARCHAR(36) NOT NULL,
+    patch_number INTEGER,
+    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (patch_id) REFERENCES patch (id),
+    PRIMARY KEY (user_id, patch_id)
 );
 
 -- Create Access Token table
@@ -38,5 +48,5 @@ CREATE TABLE IF NOT EXISTS "accesstoken" (
     token VARCHAR(36) PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES "user" (id)
+    FOREIGN KEY (user_id) REFERENCES user (id)
 );

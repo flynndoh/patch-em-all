@@ -1,8 +1,8 @@
-<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-  <v-app-bar app flat dense>
+<template>
+  <v-app-bar flat>
     <v-container>
       <v-row style="align-items:center; justify-content:space-between">
-        <v-col class="nav-container" cols="7" sm="6" md="5">
+        <v-col class="nav-container" cols="12" sm="4" md="4">
           <span v-for="nav in navRoutes" :key="nav.id" class="mr-5">
             <a @click="goToRoute(nav.routeName)" :class="nav.routeName == currentRouteName ? 'nav-route selected' : 'nav-route'">
               {{ nav.name }}
@@ -10,47 +10,41 @@
           </span>
         </v-col>
 
-        <v-col class="logo-container" cols="1" sm="1" md="2">
+        <v-col cols="12" sm="4" md="4" style="display: flex; justify-content: center;">
           <a @click="goToRoute(routes.HOME)">
-            <v-container pa-0 ma-0 text-center>
-              <img v-if="$vuetify.theme.dark" style="height: 25px" alt="STOCKSLIP Logo" src="../../assets/stockslip-alt-white.png">
-              <img v-else style="height: 25px" alt="STOCKSLIP Logo" src="../../assets/stockslip-alt-black.png">
-            </v-container>
+            <div class="logo-container">
+              <img style="text-align: right" class="mr-2" height="60" alt="PATCH-EM-ALL Logo" src="../../assets/patchemall.png"/>
+              <h1 style="text-align: left" class="ml-2" >PATCH 'EM ALL</h1 >
+            </div>
           </a>
         </v-col>
 
-        <v-col class="icon-container pa-0" cols="3" sm="5" md="5">
-          <span>
-            <v-menu :close-on-content-click="false" :nudge-width="100" offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on">
-                  <v-icon>mdi-cog</v-icon>
-                </v-btn>
-              </template>
-
+        <v-col class="actions-container" cols="12" sm="4" md="4">
+          <v-btn icon="" class="mr-3">
+            <v-icon>mdi-cog</v-icon>
+            <v-menu activator="parent" :close-on-content-click="false" location="bottom">
               <v-card>
                 <v-list>
                   <v-list-item>
-                    <v-btn circle v-if="!theme.global.current.value.dark" dark x-small fab @click="toggleTheme">
-                      <v-icon class="mr-1" light>mdi-moon-waxing-crescent</v-icon>
+                    <v-btn v-if="!theme.global.current.value.dark" dark x-small fab @click="toggleTheme">
+                      <v-icon class="mr-3" light>mdi-moon-waxing-crescent</v-icon> Lights Off
                     </v-btn>
-                    <v-btn circle v-else light x-small fab @click="toggleTheme">
-                      <v-icon dark>mdi-white-balance-sunny</v-icon>
+                    <v-btn v-else light x-small fab @click="toggleTheme">
+                      <v-icon class="mr-3" dark>mdi-white-balance-sunny</v-icon> Lights On
                     </v-btn>
                   </v-list-item>
                 </v-list>
               </v-card>
             </v-menu>
+          </v-btn>
 
-            <v-btn v-if="showLoginButton" centered @click="openLoginDialog">
-              Login <v-icon right color="happy">mdi-login</v-icon>
+          <v-btn v-if="showLoginButton" centered @click="openLoginDialog">
+            Login <v-icon class="ml-2 mb-1" right color="happy">mdi-login</v-icon>
+          </v-btn>
+          <span v-else>
+            <v-btn @click="goToRoute(routes.PROFILE)">
+              <v-icon>mdi-account-tie</v-icon>
             </v-btn>
-
-            <span v-else>
-              <v-btn @click="goToRoute(routes.PROFILE)">
-                <v-icon>mdi-account-tie</v-icon>
-              </v-btn>
-            </span>
           </span>
         </v-col>
       </v-row>
@@ -66,6 +60,10 @@
   import { useRoute } from 'vue-router'
   import routes from '@/router/routes'
   import { useTheme } from 'vuetify'
+  import IconBase from '@/components/general/Icons/IconBase.vue'
+  import LogoIcon from '@/components/general/Icons/IconLogo.vue'
+  import { persistenceStore } from '@/stores/persistence'
+  import { showInfoSnackbar } from '@/mixins/snackbar'
 
   const theme = useTheme();
 
@@ -84,46 +82,64 @@
   function openLoginDialog () {
     EventBus.emit(events.OPEN_LOGIN_DIALOG)
   }
+
+  function toggleTheme() {
+    theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
+    persistenceStore().updateSettings({'theme': theme.global.name.value})
+  }
 </script>
 
-<style scoped>
-  li a {
-    text-decoration: none;
-    color: inherit;
-  }
+<style scoped lang="scss">
+.logo-text {
+  white-space: nowrap;
+  width: 100%;
+  margin: auto;
+  text-align: center;
+  color: white;
+}
 
-  .nav-container {
-    text-align: left;
-  }
+.logo-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
 
-  .nav-route {
-    color: darkgray;
-    letter-spacing: 1px;
-    font-weight: 500;
-    font-size: 18px;
-    font-family: "Space Grotesk", sans-serif;
-  }
+li a {
+  text-decoration: none;
+  color: inherit;
+}
 
-  .nav-route:hover {
-    color: gray;
-  }
+.nav-container {
+  text-align: left;
+}
 
-  .selected {
-    color: inherit;
-    font-weight: 800;
-  }
+.actions-container {
+  text-align: right;
+}
 
-  .selected:hover {
-    color: inherit;
-  }
+.nav-route {
+  color: darkgray;
+  letter-spacing: 1px;
+  font-weight: 500;
+  font-size: 18px;
+  font-family: "Space Grotesk", sans-serif;
+}
 
-  .logo-container {
-    text-align: center;
-    align-self: flex-end;
-    padding-top: 20px;
-  }
+.nav-route:hover {
+  color: gray;
+}
 
-  .icon-container {
-    text-align: right;
-  }
+.selected {
+  color: inherit;
+  font-weight: 800;
+}
+
+.selected:hover {
+  color: inherit;
+}
+
+.icon-container {
+  text-align: right;
+}
 </style>

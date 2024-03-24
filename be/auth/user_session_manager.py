@@ -37,13 +37,13 @@ async def get_user_manager(user_db: SQLModelUserDatabase = Depends(get_user_db))
     yield UserManager(user_db)
 
 
-cookie_transport = CookieTransport(cookie_max_age=3600)
+cookie_transport = CookieTransport(cookie_max_age=environment.cookie_max_age)
 
 
 def get_database_strategy(
     access_token_db: AccessTokenDatabase[AccessToken] = Depends(get_access_token_db),
 ) -> DatabaseStrategy:
-    return DatabaseStrategy(access_token_db, lifetime_seconds=3600)
+    return DatabaseStrategy(access_token_db, lifetime_seconds=environment.cookie_max_age)
 
 
 auth_backend = AuthenticationBackend(

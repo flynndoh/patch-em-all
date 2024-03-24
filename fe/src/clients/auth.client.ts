@@ -52,7 +52,6 @@ export declare namespace Requests {
 
 class AuthClient implements AuthApi {
   async login(payload: Requests.Login): Promise<void> {
-    console.log(payload)
     return CoreClient.client.postForm('/auth/login', payload)
   }
 

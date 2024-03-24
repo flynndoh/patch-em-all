@@ -1,15 +1,14 @@
 <template>
   <v-dialog :model-value="loginDialogOpen" width="500" persistent>
-    <v-card shaped>
-      <v-card-title class="secondary-inverted">
-        <h2>Login</h2>
-        <v-spacer />
-        <v-btn @click="closeDialog">
+    <v-card style="border-radius:40px 10px;" class="pa-5">
+      <v-card-title class="heading">
+        <h2 class="pt-3">Login</h2>
+        <v-btn @click="closeDialog" class="bg-red-lighten-1">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
 
-      <v-card-subtitle class="secondary-inverted pt-3">
+      <v-card-subtitle class="pt-3">
         <h3>Welcome back</h3>
       </v-card-subtitle>
 
@@ -41,7 +40,7 @@
         </v-form>
       </v-card-text>
 
-      <v-alert :value="loginAlert" color="error">Incorrect login credentials.</v-alert>
+      <v-alert icon="$error" :model-value="loginFailure" color="error">Incorrect login credentials.</v-alert>
 
       <v-divider></v-divider>
 
@@ -68,8 +67,8 @@ defineProps({
   switchDialogCb: { required: true }
 })
 
-let loginAlert: boolean = false
-let loginProcessing: boolean = false
+let loginFailure = ref(false)
+let loginProcessing = ref(false)
 const email = ref("");
 const password = ref("");
 
@@ -81,12 +80,13 @@ function closeDialog() {
 }
 
 function login() {
+  // TODO: This validation check no longer prevents the request from being sent!
   if (!form_login.value.validate()) {
     return
   }
 
-  loginAlert = false
-  loginProcessing = true
+  loginFailure.value = false
+  loginProcessing.value = true
   userStore()
     .login(email.value, password.value)
     .then(() => {
@@ -96,8 +96,8 @@ function login() {
       EventBus.emit(events.CLIENT_LOGGED_IN)
       closeDialog();
     })
-    .catch(() => (loginAlert = true))
-    .finally(() => (loginProcessing = false))
+    .catch(() => (loginFailure.value = true))
+    .finally(() => (loginProcessing.value = false))
 }
 
 function goToPasswordInput() {
@@ -106,6 +106,12 @@ function goToPasswordInput() {
 </script>
 
 <style scoped lang="scss">
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .btn-login {
   margin-right: 10px;
 }

@@ -4,7 +4,7 @@ axios.defaults.withCredentials = true
 const protocol = 'http'
 const host = 'localhost'
 const port = ':3000'
-const apiURL = `${protocol}://${host}${port}/api/v1/`
+export const apiURL = `${protocol}://${host}${port}/api/v1/`
 
 class CoreClient {
   client: AxiosInstance = axios.create({
