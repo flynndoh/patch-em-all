@@ -24,13 +24,13 @@ const vuetify = createVuetify({
       light: {
         colors: {
           background: '#f7f7f7',
-          happy: green.lighten1,
+          happy: '#28BD7E',
           sad: red.lighten1,
         }
       },
       dark: {
         colors: {
-          happy: green.lighten1,
+          happy: '#28BD7E',
           sad: red.lighten1,
         }
       },

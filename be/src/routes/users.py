@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func
-from sqlmodel import select
+from sqlmodel import select, desc
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from auth.user_session_manager import fastapi_users, current_active_user
+from session.user_session_manager import fastapi_users, current_active_user
 from database import get_async_session, get_user_db
 from adapters.sqlmodel_fastapiuser import SQLModelUserDatabaseAsync
-from models.db_models import User, UserPatch, Flight, Patch
+from models.db_models import User, UserPatch, Patch
 from models.biz_models import UserRead, UserUpdate, PatchesRead, PatchRead
 
 users_router = APIRouter(tags=["users"], prefix="/users")
@@ -22,11 +21,18 @@ async def get_users(session: AsyncSession = Depends(get_async_session)):
 
 
 @users_router.get("/me/patches")
-async def get_user_patches(session: AsyncSession = Depends(get_async_session), user: User = Depends(current_active_user)):
-    user_patches = (await session.exec(select(UserPatch).where(UserPatch.user_id == user.id).order_by(UserPatch.patch_number.desc()))).all()
+async def get_patches(session: AsyncSession = Depends(get_async_session), user: User = Depends(current_active_user)):
+    patches = (
+        await session.exec(
+            select(UserPatch)
+            .where(UserPatch.user_id == user.id)
+            .order_by(desc(UserPatch.patch_number))
+        )
+    ).all()
     response = PatchesRead(patches=[])
-    for user_patch in user_patches:
-        response.patches.append(PatchRead(id=user_patch.patch_id, patch_number=user_patch.patch_number, flight=user_patch.patch.flight, image=user_patch.patch.image, thumbnail=user_patch.patch.thumbnail))
+    for patch in patches:
+        response.patches.append(PatchRead(id=patch.patch_id, patch_number=patch.patch_number, flight=patch.patch.flight,
+                                          image=patch.patch.image, thumbnail=patch.patch.thumbnail))
     return response
 
 
@@ -35,11 +41,7 @@ async def get_user_patches(id: str, session: AsyncSession = Depends(get_async_se
     user = await user_db.get(id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    user_patches = (await session.exec(select(UserPatch).where(UserPatch.user_id == user.id))).all()
-    response = PatchesRead(patches=[])
-    for user_patches in user_patches:
-        response.patches.append(PatchRead(id=user_patches.patch_id, patch_number=user_patches.patch_number, flight=user_patches.patch.flight, image=user_patches.patch.image, thumbnail=user_patches.patch.thumbnail))
-    return response
+    return await get_patches(session=session, user=user)
 
 
 @users_router.post("/me/patches")

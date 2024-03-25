@@ -1,5 +1,5 @@
 import { apiURL } from '@/clients/core.client'
 
-export function png_proxy(url: string) {
+export function pngProxy(url: string) {
   return `${apiURL}cors-proxy/png/${url}`;
 }

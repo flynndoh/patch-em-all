@@ -3,9 +3,9 @@ from sqlalchemy import func
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from auth.user_session_manager import current_active_user, current_super_user
+from session.user_session_manager import current_super_user
 from database import get_async_session
-from models.db_models import Patch, User, Flight
+from models.db_models import Patch, Flight
 
 patches_router = APIRouter(tags=["patches"], prefix="/patches")
 

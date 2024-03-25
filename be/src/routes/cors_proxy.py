@@ -13,7 +13,8 @@ async def proxy_png(arbitrary_path: str):
     if "../" in arbitrary_path:
         raise HTTPException(status_code=500, detail="No")
 
-    arbitrary_file = Path(f"{Path(__file__).resolve().parent.parent}/static/img/{int(hashlib.sha1(arbitrary_path.encode('utf-8')).hexdigest(), 16)}.png")
+    root_dir = Path(__file__).resolve().parent.parent.parent
+    arbitrary_file = Path(f"{root_dir}/static/img/{int(hashlib.sha1(arbitrary_path.encode('utf-8')).hexdigest(), 16)}.png")
 
     if arbitrary_file.is_file():
         return Response(arbitrary_file.read_bytes(), media_type="image/png")

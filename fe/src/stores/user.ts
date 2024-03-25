@@ -7,6 +7,7 @@ export const userStore = defineStore('users', {
   state: () => ({
     userData: {} as Responses.User,
     patches: [] as Responses.Patch[],
+    allUsers: [] as Responses.User[],
     pokemon: [] as Responses.Pokemon[],
   }),
 
@@ -16,8 +17,8 @@ export const userStore = defineStore('users', {
         username: email,
         password: password
       }
-      await AuthClient.login(request).catch((error) => {
-        return Promise.reject(error);
+      await AuthClient.login(request).catch((err) => {
+        return Promise.reject(err);
       })
 
       this.userData = (await UserClient.getMe()).data
@@ -30,11 +31,11 @@ export const userStore = defineStore('users', {
         email: email,
         password: password
       }
-      await AuthClient.register(request).catch((error) => {
-        return Promise.reject(error);
+      await AuthClient.register(request).catch((err) => {
+        return Promise.reject(err);
       })
-      return await this.login(email, password).catch((error) => {
-        return Promise.reject(error);
+      return await this.login(email, password).catch((err) => {
+        return Promise.reject(err);
       })
     },
     async refreshMe(): Promise<Responses.User | undefined> {
@@ -43,10 +44,10 @@ export const userStore = defineStore('users', {
           this.userData = userResponse.data;
           return Promise.resolve(this.userData);
         }
-      }).catch(() => {
+      }).catch((err) => {
           // Resolving promise rather than rejecting as I am using basic auth with no access to header only cookie.
           this.userData = {} as Responses.User;
-          return Promise.resolve(this.userData);
+          return Promise.resolve(err);
         }
       );
     },
@@ -56,9 +57,21 @@ export const userStore = defineStore('users', {
           this.patches = patchesResponse.data.patches;
           return Promise.resolve(this.patches);
         }
-      }).catch(() => {
+      }).catch((err) => {
           this.patches = [] as Responses.Patch[];
-          return Promise.reject(this.patches);
+          return Promise.reject(err);
+        }
+      );
+    },
+    async refreshAllUsers(): Promise<Responses.User[] | undefined> {
+      return await UserClient.getAllUsers().then((allUsersResponse) => {
+        if (allUsersResponse.status === 200) {
+          this.allUsers = allUsersResponse.data;
+          return Promise.resolve(this.allUsers);
+        }
+      }).catch((err) => {
+          this.allUsers = [] as Responses.User[];
+          return Promise.reject(err);
         }
       );
     },
@@ -68,9 +81,29 @@ export const userStore = defineStore('users', {
           this.pokemon = pokemonResponse.data;
           return Promise.resolve(this.pokemon);
         }
-      }).catch(() => {
+      }).catch((err) => {
           this.pokemon = [] as Responses.Pokemon[];
-          return Promise.reject(this.pokemon);
+          return Promise.reject(err);
+        }
+      );
+    },
+    async getPatchesForUser(id: string): Promise<Responses.Patch[] | undefined> {
+      return await UserClient.getPatchesForUser(id).then((patchesResponse) => {
+        if (patchesResponse.status === 200) {
+          return Promise.resolve(patchesResponse.data.patches);
+        }
+      }).catch((err) => {
+          return Promise.reject(err);
+        }
+      );
+    },
+    async getPokemon(ids: number[]): Promise<Responses.Pokemon[] | undefined> {
+      return await UserClient.getManyPokemon({pokemon_ids: ids}).then((pokemonResponse) => {
+        if (pokemonResponse.status === 200) {
+          return Promise.resolve(pokemonResponse.data);
+        }
+      }).catch((err) => {
+          return Promise.reject(err);
         }
       );
     },
@@ -83,8 +116,8 @@ export const userStore = defineStore('users', {
   },
   getters: {
     isLoggedIn: (state) => !isEmpty(state.userData),
-    latestPatch: (state) => state.patches.reduce((a, b) => a.patch_number < b.patch_number ? a : b),
-    latestPokemon: (state) => state.pokemon.reduce((a, b) => a.id < b.id ? a : b),
+    latestPatch: (state) => state.patches.length > 0 ? state.patches.reduce((a, b) => a.patch_number < b.patch_number ? a : b) : undefined,
+    latestPokemon: (state) => state.pokemon.length > 0 ? state.pokemon.reduce((a, b) => a.id < b.id ? a : b) : undefined,
     // currentPatent: (state) => ,
   }
 })

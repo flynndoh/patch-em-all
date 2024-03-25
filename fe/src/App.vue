@@ -31,8 +31,10 @@ import FloatingTop from '@/components/general/FloatingTop.vue'
 import FooterBar from '@/components/general/FooterBar.vue'
 
 let transition: string
-let transitionMode: string = 'out-in'
-let transitionEnterActiveClass: string = ''
+
+export type TransitionModeType = 'default' | 'out-in' | 'in-out' | undefined
+let transitionMode = 'out-in' as TransitionModeType
+let transitionEnterActiveClass = '' as string
 
 const theme = useTheme()
 
@@ -40,7 +42,7 @@ onMounted(() => {
   theme.global.name.value = persistenceStore().settings.theme;
 
   router.beforeEach((to, from, next) => {
-    transition = to.meta.transition || from.meta.transition || 'fade'
+    transition = to.meta.transition as string || from.meta.transition as string || 'fade'
 
     if (transition === 'slide') {
       const toDepth = to.path.split('/').length
@@ -82,7 +84,7 @@ $title-font: 'UnisSansHeavyItalicCAPS';
   font-weight: normal;
 }
 
-p a, .green{
+p a, .green {
   text-decoration: none;
   color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
@@ -90,12 +92,18 @@ p a, .green{
   cursor: pointer;
 }
 
+.helper-text {
+  font-size: 15px;
+  text-align: center;
+  font-style: italic;
+  color: gray;
+}
+
 a {
   text-decoration: none;
   transition: 0.4s;
   cursor: pointer;
 }
-
 
 .v-application {
   font-family: $body-font, sans-serif !important;
@@ -130,10 +138,6 @@ a {
     font-family: $title-font, monospace !important;
     font-size: 1.4em;
     font-weight: 800;
-  }
-
-  p {
-    font-size: 0.8em;
   }
 
   .number-text-style {

@@ -16,8 +16,8 @@ from models.db_models import User, AccessToken
 
 
 class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
-    reset_password_token_secret = environment.private.auth_secret
-    verification_token_secret = environment.private.auth_secret
+    reset_password_token_secret = environment.auth_secret
+    verification_token_secret = environment.auth_secret
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         print(f"User {user.id} has registered.")

@@ -3,7 +3,9 @@ import CoreClient from './core.client'
 
 export interface UserApi {
   getMe(): Promise<AxiosResponse<Responses.User>>
+  getAllUsers(): Promise<AxiosResponse<Responses.User[]>>
   getMyPatches(): Promise<AxiosResponse<Responses.Patches>>
+  getPatchesForUser(id: string): Promise<AxiosResponse<Responses.Patches>>
   getPokemon(id: number): Promise<AxiosResponse<Responses.Pokemon>>
   getManyPokemon(payload: Requests.GetPokemon): Promise<AxiosResponse<Responses.Pokemon[]>>
 }
@@ -57,8 +59,16 @@ class UserClient implements UserApi {
     return CoreClient.client.get<Responses.User>('/users/me')
   }
 
+  async getAllUsers(): Promise<AxiosResponse<Responses.User[]>> {
+    return CoreClient.client.get<Responses.User[]>('/users')
+  }
+
   async getMyPatches(): Promise<AxiosResponse<Responses.Patches>> {
     return CoreClient.client.get<Responses.Patches>('/users/me/patches')
+  }
+
+  async getPatchesForUser(id: string): Promise<AxiosResponse<Responses.Patches>> {
+    return CoreClient.client.get<Responses.Patches>(`/users/${id}/patches`)
   }
 
   async getPokemon(id: number): Promise<AxiosResponse<Responses.Pokemon>> {

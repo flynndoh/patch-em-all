@@ -9,6 +9,7 @@ import NotFoundPage from '@/pages/NotFoundPage.vue'
 
 const tryToFetchMe = async (to, from, next: Function) => {
   try {
+    await userStore().refreshAllUsers()
     if (!userStore().isLoggedIn) {
       await userStore().refreshMe().catch(() => {
         return next();

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from auth.user_session_manager import auth_backend, fastapi_users
+from session.user_session_manager import auth_backend, fastapi_users
 from models.biz_models import UserCreate, UserRead
 
 auth_router = APIRouter(tags=["auth"], prefix="/auth")

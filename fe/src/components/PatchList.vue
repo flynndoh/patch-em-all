@@ -2,13 +2,13 @@
   <v-container>
     <div class="heading">
       <h3>YOUR PATCHES </h3>
-      <v-btn class="mb-2" icon="mdi-plus" density="comfortable" @click="clientLoggedIn ? openAddPatchDialog : openLoginDialog"/>
+      <v-btn class="mb-2" color="#28BD7E" icon="mdi-plus" density="comfortable" @click="clientLoggedIn ? openAddPatchDialog : openLoginDialog"/>
     </div>
     <v-divider class="mb-5" />
     <v-container v-if="clientLoggedIn && myPatches.length > 0" class="pa-0 ma-0">
       <v-virtual-scroll :height="600" :items="myPatches" style="scrollbar-width: thin;">
         <template v-slot:default="{ item }">
-          <v-list-item :prepend-avatar="png_proxy(item.image)" :key="item.id" class="px-0 py-2">
+          <v-list-item :prepend-avatar="pngProxy(item.image)" :key="item.id" class="px-0 py-2">
             <v-list-item-title>#{{item.patch_number}}<span class="subtext">{{item.flight.timestamp.toLocaleString().replace("T", ", ")}} (UTC)</span></v-list-item-title>
             <v-list-item-subtitle>{{item.flight.name}}</v-list-item-subtitle>
           </v-list-item>
@@ -17,11 +17,11 @@
     </v-container>
     <v-container v-else class="px-5">
       <v-img src="../../../patch.svg" class="patch" height="120" contain/>
-      <p v-if="!clientLoggedIn">
+      <p v-if="!clientLoggedIn" class="helper-text">
         <a @click="openLoginDialog">Login</a> or
         <a @click="openRegisterDialog">register</a> to track your patches.
       </p>
-      <p v-else> you haven't added any patches :(<br /><a @click="openAddPatchDialog">add some!</a></p>
+      <p v-else class="helper-text"> you haven't added any patches :(<br /><a @click="openAddPatchDialog">add some!</a></p>
     </v-container>
   </v-container>
 </template>
@@ -30,7 +30,7 @@
 import { computed } from 'vue'
 import { userStore } from '@/stores/user'
 import { EventBus, events } from '@/event-bus'
-import { png_proxy } from '@/mixins/cors-proxy'
+import { pngProxy } from '@/mixins/cors-proxy'
 
 const clientLoggedIn = computed(() => {
   return userStore().isLoggedIn;
@@ -58,11 +58,6 @@ function openAddPatchDialog() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.helper-text p {
-  font-size: 15px;
-  text-align: center;
-  font-style: italic;
 }
 
 .patch {
