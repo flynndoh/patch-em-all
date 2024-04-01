@@ -14,7 +14,8 @@
 
       <v-progress-linear
         indeterminate
-        color="yellow darken-2"
+        class="mt-5"
+        color="happy"
         v-if="loginProcessing"
       ></v-progress-linear>
 
@@ -25,15 +26,15 @@
             v-model="email"
             prepend-icon="mdi-account"
             label="Email"
-            :rules="rules.required"
+            :rules="rules.email"
             v-on:keyup.enter="goToPasswordInput"
           ></v-text-field>
           <v-text-field
             ref="input_password"
             v-model="password"
             prepend-icon="mdi-lock"
-            label="Password"
-            :rules="rules.required"
+            label="4 Digit Pin"
+            :rules="rules.pinCode"
             type="password"
             v-on:keyup.enter="login"
           ></v-text-field>
@@ -79,15 +80,14 @@ function closeDialog() {
   EventBus.emit(events.CLOSE_LOGIN_DIALOG)
 }
 
-function login() {
-  // TODO: This validation check no longer prevents the request from being sent!
-  if (!form_login.value.validate()) {
+async function login() {
+  if (!form_login.value.isValid) {
     return
   }
 
   loginFailure.value = false
   loginProcessing.value = true
-  userStore()
+  await userStore()
     .login(email.value, password.value)
     .then(() => {
       email.value = ''

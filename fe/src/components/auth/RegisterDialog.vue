@@ -16,12 +16,13 @@
 
       <v-progress-linear
         indeterminate
-        color="yellow darken-2"
+        class="mt-5"
+        color="happy"
         v-if="registerProcessing"
       ></v-progress-linear>
 
       <v-card-text class="mt-5">
-        <v-form ref="form_register" validate-on="submit lazy">
+        <v-form ref="form_register">
           <v-row>
             <v-col>
               <v-text-field
@@ -30,7 +31,6 @@
                 prepend-icon="mdi-account"
                 label="First Name"
                 :rules="rules.required"
-                required
                 v-on:keyup.enter="goToLastNameInput"
               ></v-text-field>
             </v-col>
@@ -40,7 +40,6 @@
                 v-model="lastName"
                 label="Last Name"
                 :rules="rules.required"
-                required
                 v-on:keyup.enter="goToEmailInput"
               ></v-text-field>
             </v-col>
@@ -51,23 +50,22 @@
             prepend-icon="mdi-email"
             label="Email"
             :rules="rules.email"
-            required
             v-on:keyup.enter="goToPasswordInput"
           ></v-text-field>
           <v-text-field
             ref="input_password"
             v-model="password"
             prepend-icon="mdi-lock"
-            label="Password"
-            required
-            :rules="rules.required"
+            label="4 Digit Pin"
+            :rules="rules.pinCode"
             type="password"
             v-on:keyup.enter="register"
           ></v-text-field>
         </v-form>
       </v-card-text>
 
-      <v-alert icon="$error" :model-value="registerFailure" color="error">Registration failed.</v-alert>
+      <v-alert icon="$error" :model-value="registerFailureMessage.length > 0" color="error">Registration failed.
+        {{ registerFailureMessage }}</v-alert>
 
       <v-divider></v-divider>
 
@@ -94,8 +92,8 @@ defineProps({
   switchDialogCb: {required: true}
 });
 
-let registerFailure = ref(false)
-let registerProcessing = ref(false)
+const registerFailureMessage = ref("");
+const registerProcessing = ref(false);
 const firstName = ref("");
 const lastName = ref("");
 const email = ref("");
@@ -110,15 +108,14 @@ function closeDialog() {
   EventBus.emit(events.CLOSE_REGISTER_DIALOG);
 }
 
-function register() {
-  // TODO: This validation check no longer prevents the request from being sent!
-  if (!form_register.value.validate()) {
-    return;
+async function register() {
+  if (!form_register.value.isValid) {
+    return
   }
 
-  registerFailure.value = false
+  registerFailureMessage.value = '';
   registerProcessing.value = true;
-  userStore().registerAndLogin(firstName.value, lastName.value, email.value, password.value)
+  await userStore().registerAndLogin(firstName.value, lastName.value, email.value, password.value)
     .then(() => {
       firstName.value = "";
       lastName.value = "";
@@ -128,7 +125,9 @@ function register() {
       EventBus.emit(events.CLIENT_LOGGED_IN);
       closeDialog();
     })
-    .catch(() => registerFailure.value = true)
+    .catch((err) => {
+      registerFailureMessage.value = err;
+    })
     .finally(() => registerProcessing.value = false);
 }
 function goToLastNameInput() {

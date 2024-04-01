@@ -2,9 +2,7 @@
   <v-container>
     <h3>PATCHES OVER TIME</h3>
     <v-divider class="mt-2 mb-5" />
-    /* tslint:disable */
     <v-btn @click="chart?.chart.resetZoom()">Reset</v-btn>
-    /* tslint:enable */
     <Line ref="chart" v-if="chartData.datasets" :data="chartData" :options="chartOptions"/>
     <v-container v-else class="px-5">
       <v-img src="../../../line-chart.svg" class="chart-placeholder" height="120" contain/>

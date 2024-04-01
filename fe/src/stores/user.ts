@@ -18,7 +18,7 @@ export const userStore = defineStore('users', {
         password: password
       }
       await AuthClient.login(request).catch((err) => {
-        return Promise.reject(err);
+        return Promise.reject(err.message);
       })
 
       this.userData = (await UserClient.getMe()).data
@@ -32,10 +32,14 @@ export const userStore = defineStore('users', {
         password: password
       }
       await AuthClient.register(request).catch((err) => {
-        return Promise.reject(err);
+        console.log(err.response);
+        if (err.response.data.detail === 'REGISTER_USER_ALREADY_EXISTS') {
+          return Promise.reject("User already exists with that email.");
+        }
+        return Promise.reject(err.message);
       })
       return await this.login(email, password).catch((err) => {
-        return Promise.reject(err);
+        return Promise.reject(err.message);
       })
     },
     async refreshMe(): Promise<Responses.User | undefined> {

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row no-gutters>
-      <v-btn @click="logout">Logout</v-btn>
+      <v-btn @click="logout" v-if="userStore().isLoggedIn" >Logout</v-btn>
     </v-row>
   </v-container>
 </template>
