@@ -117,12 +117,12 @@ function goToPasswordInput() {
 }
 
 .btn-shine {
-  padding: 0 48px;
-  margin: -28px; // negative margin to keep padding for animation
+  padding-left: 48px;
+  margin-left: -48px; // negative margin to keep padding for animation
   background: linear-gradient(to right, gray 0, gold 10%, gray 20%) 0;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shine 3s infinite linear;
+  animation: shine 3s infinite ease-in-out;
   animation-fill-mode: forwards;
   -webkit-text-size-adjust: none;
   font-weight: 600;
@@ -136,11 +136,11 @@ function goToPasswordInput() {
   0% {
     background-position: 0;
   }
-  60% {
-    background-position: 180px;
+  50% {
+    background-position: 150px;
   }
   100% {
-    background-position: 180px;
+    background-position: 0;
   }
 }
 </style>

@@ -39,7 +39,8 @@
 
 <script setup lang="ts">
 import { type Responses } from '@/clients/user.client'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { userStore } from '@/stores/user'
 
 const emit = defineEmits(['selected-users-updated'])
 defineProps<{
@@ -48,6 +49,12 @@ defineProps<{
 
 const selectedUsers = ref([])
 watch(selectedUsers, () => emit('selected-users-updated', selectedUsers.value));
+
+onMounted(() => {
+  if (userStore().isLoggedIn) {
+    selectedUsers.value = [userStore().userData];
+  }
+})
 
 function filterUsers(value: string, queryText: string, item: any) {
   return (

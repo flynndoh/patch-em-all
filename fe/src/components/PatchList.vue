@@ -1,8 +1,8 @@
 <template>
   <v-container>
-    <div class="heading">
-      <h3>YOUR PATCHES </h3>
-      <v-btn class="mb-2" color="#28BD7E" icon="mdi-plus" density="comfortable" @click="clientLoggedIn ? openAddPatchDialog : openLoginDialog"/>
+    <div class="heading mb-2">
+      <h3>PATCH COLLECTION</h3>
+      <v-btn style="margin-top: -10px" color="#28BD7E" icon="mdi-plus" density="comfortable" @click="clientLoggedIn ? openAddPatchDialog : openLoginDialog"/>
     </div>
     <v-divider class="mb-5" />
     <v-container v-if="clientLoggedIn && myPatches.length > 0" class="pa-0 ma-0">
@@ -16,12 +16,12 @@
       </v-virtual-scroll>
     </v-container>
     <v-container v-else class="px-5">
-      <v-img src="../../../patch.svg" class="patch" height="120" contain/>
+      <v-img src="../../../patch.svg" class="patch" height="180" contain/>
       <p v-if="!clientLoggedIn" class="helper-text">
         <a @click="openLoginDialog">Login</a> or
         <a @click="openRegisterDialog">register</a> to track your patches.
       </p>
-      <p v-else class="helper-text"> you haven't added any patches :(<br /><a @click="openAddPatchDialog">add some!</a></p>
+      <p v-else class="helper-text">You haven't added any patches :(<br /><a @click="openAddPatchDialog">Add some!</a></p>
     </v-container>
   </v-container>
 </template>
@@ -61,7 +61,7 @@ function openAddPatchDialog() {
 }
 
 .patch {
-  margin-top: 60px;
+  margin-top: 50px;
   margin-bottom: 40px;
   filter: drop-shadow(0px 0px 15px red) invert(75%);
 }

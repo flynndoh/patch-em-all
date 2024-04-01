@@ -32,7 +32,6 @@ export const userStore = defineStore('users', {
         password: password
       }
       await AuthClient.register(request).catch((err) => {
-        console.log(err.response);
         if (err.response.data.detail === 'REGISTER_USER_ALREADY_EXISTS') {
           return Promise.reject("User already exists with that email.");
         }
