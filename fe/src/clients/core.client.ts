@@ -3,7 +3,7 @@ axios.defaults.withCredentials = true
 
 const protocol = 'http'
 const host = 'localhost'
-const port = ':3000'
+const port = ':3030'
 export const apiURL = `${protocol}://${host}${port}/api/v1/`
 
 class CoreClient {

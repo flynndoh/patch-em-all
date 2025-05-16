@@ -286,7 +286,7 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm
-/patch-em-all.sqlite
+/db/patch-em-all.sqlite
 /schema/test-data/flights.sql
 /schema/test-data/patches.sql
 /schema/test-data/users.sql

@@ -11,7 +11,7 @@ app.include_router(api_v1_router)
 
 origins = [
     "http://localhost",
-    "http://localhost:8000",
+    "http://localhost:8080",
 ]
 
 app.add_middleware(
@@ -35,4 +35,4 @@ async def lifespan(app: FastAPI) -> None:
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=3000)
+    uvicorn.run(app, host="0.0.0.0", port=3030)
